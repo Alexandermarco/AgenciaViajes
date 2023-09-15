@@ -1,0 +1,48 @@
+import TestimonialModel from '../Models/TestimonialModel.js';
+
+const guardarTestimonial = async (req, res) => {
+
+    const { nombre, correo, mensaje } = req.body;
+    const errores = [];
+
+    if (nombre.trim() === '') {
+        errores.push({mensaje: 'El nombre no puede estar vacio'});
+    }
+
+    if (correo.trim() === '') {
+        errores.push({mensaje: 'El correo no puede estar vacio'});
+    }
+
+    if (mensaje.trim() === '') {
+        errores.push({mensaje: 'El mensaje no puede estar vacio'});
+    }
+
+    if (errores.length > 0) {
+
+        const todosTestimoniales = await TestimonialModel.findAll();
+
+        res.render('Testimoniales', {
+            pagina: 'Testimoniales',
+            errores,
+            nombre,
+            correo,
+            mensaje,
+            todosTestimoniales
+        })
+    }else{
+        try {
+            await TestimonialModel.create({
+                nombre,
+                correo,
+                mensaje
+            })
+            res.redirect('/Testimoniales');
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+export {
+    guardarTestimonial
+}
